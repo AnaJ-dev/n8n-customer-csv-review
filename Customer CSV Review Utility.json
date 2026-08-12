@@ -1,0 +1,141 @@
+{
+  "name": "Customer CSV Review Utility",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "const allItems = $input.all();\n\nfor (const eachItem of allItems) {\n  if (\n    !eachItem.json.name ||\n    !eachItem.json.email ||\n    eachItem.json.age <= 0\n  ) {\n    throw new Error(\"error\");\n  }\n}\n\nreturn allItems;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        592,
+        0
+      ],
+      "id": "3eec8158-d77c-40d7-88c6-6f519c6fbc1c",
+      "name": "Validate Customers"
+    },
+    {
+      "parameters": {
+        "formTitle": "Form",
+        "formDescription": "From test",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": " Customer CSV",
+              "fieldType": "file"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        0,
+        0
+      ],
+      "id": "38420b7c-69a7-4926-b3aa-ef5bb2e5727c",
+      "name": "Upload Customer CSV",
+      "webhookId": "f6ef5e76-52e0-4c45-9282-1ba34a9e0b28"
+    },
+    {
+      "parameters": {
+        "binaryPropertyName": "_Customer_CSV",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        384,
+        0
+      ],
+      "id": "8e320959-8b96-4338-967d-deba563627a8",
+      "name": "Extract CSV from File"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst itemCount = items.length;\nconst averageAge =\n  items.reduce((sum, item) => sum + Number(item?.json?.age), 0) / itemCount;\nconst emails = items.map((item) => item?.json?.email);\n\nreturn [{ json: { itemCount, averageAge, emails } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        0
+      ],
+      "id": "00268b0e-36b2-4633-a07d-455137c3dbff",
+      "name": "Customer Summary"
+    },
+    {
+      "parameters": {
+        "jsCode": "const getAll=$input.all()\nlet reviewRequired\nconst avgAge=getAll[0].json.averageAge\n\nif(avgAge<=40){\n  reviewRequired=false\n}else{\n    reviewRequired=true\n}\n\nreturn[\n  {\njson:{\n      ...getAll[0].json,\n\nreviewRequired: reviewRequired\n\n\n  \n}\n\n\n\n    \n  }\n\n\n  \n]\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1008,
+        0
+      ],
+      "id": "6527b082-b3d0-4168-8442-d7ec23ef79f3",
+      "name": "Set Review Requirement"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Validate Customers": {
+      "main": [
+        [
+          {
+            "node": "Customer Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Customer CSV": {
+      "main": [
+        [
+          {
+            "node": "Extract CSV from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract CSV from File": {
+      "main": [
+        [
+          {
+            "node": "Validate Customers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Customer Summary": {
+      "main": [
+        [
+          {
+            "node": "Set Review Requirement",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "84239a1d-616f-40d5-b397-51ceac6a5189",
+  "meta": {
+    "instanceId": "e72ad39f9315ce1ac50f87a08df1535363985dc40f366c2d2ebfb8a362c050ae"
+  },
+  "nodeGroups": [],
+  "id": "WweskVVbrtTp77nj",
+  "tags": []
+}
