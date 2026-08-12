@@ -101,20 +101,5 @@ The workflow was tested with:
 - average age below 40 → `reviewRequired: false`
 - average age above 40 → `reviewRequired: true`
 
-## Skills Demonstrated
 
-- n8n Form Trigger
-- CSV/file handling
-- Extract From File
-- n8n Code node
-- `$input.all()`
-- arrays and objects
-- JavaScript loops
-- `map()`
-- `reduce()`
-- validation
-- `throw new Error()`
-- conditional logic
-- AI-assisted coding
-- AI-generated code review and verification
 
